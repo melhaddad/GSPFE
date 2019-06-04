@@ -1,0 +1,59 @@
+<button style="float: right; margin-left: 10px;" (click)="true" nz-button nz-popover nzTrigger="click" [nzTitle]="action"
+  nzSize="small" [nzContent]="details">
+  <i class="anticon anticon-select"></i>
+  Details
+</button>
+
+<ng-template #details>
+  <nz-row nzType="flex" nzJustify="center" nzAlign="middle">
+    <nz-col *ngIf="element.type != 0">
+      <nz-card style="min-width: 250px;" nzTitle="Avant" nzType="inner">
+        <nz-list nzSize="small">
+          <nz-list-item>
+            <nz-tag [nzColor]="isNameChanged ? 'red' : false">Nom: <b>{{element.previous.name}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isDescriptionChanged ? 'red' : false">Déscription: <b>{{element.previous.description}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isQuantityChanged ? 'red' : false">Quantité: <b>{{element.previous.quantity}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isInfoChanger ? 'red' : false">Info: <b>{{element.previous.info}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isWarningChanged ? 'red' : false">Warning: <b>{{element.previous.warning}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isErrorChanged ? 'red' : false">Erreur: <b>{{element.previous.error}}</b></nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+    <nz-col *ngIf="element.type == 1" style="margin: 20px;"><i class="anticon anticon-arrow-right" nzSize="large"></i></nz-col>
+    <nz-col *ngIf="element.type != 2">
+      <nz-card style="min-width: 250px;" nzTitle="Après" nzType="inner">
+        <nz-list nzSize="small">
+          <nz-list-item>
+            <nz-tag [nzColor]="isNameChanged ? 'green' : false">Nom: <b>{{element.current.name}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isDescriptionChanged ? 'green' : false">Déscription: <b>{{element.current.description}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isQuantityChanged ? 'green' : false">Quantité: <b>{{element.current.quantity}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isInfoChanger ? 'green' : false">Info: <b>{{element.current.info}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isWarningChanged ? 'green' : false">Warning: <b>{{element.current.warning}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isErrorChanged ? 'green' : false">Erreur: <b>{{element.current.error}}</b></nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+</ng-template>

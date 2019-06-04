@@ -1,0 +1,48 @@
+<button style="float: right; margin-left: 10px;" (click)="true" nz-button nz-popover nzTrigger="click" [nzTitle]="action"
+  nzSize="small" [nzContent]="details">
+  <i class="anticon anticon-select"></i>
+  Details
+</button>
+
+<ng-template #details>
+  <nz-row nzType="flex" nzJustify="center" nzAlign="middle">
+    <nz-col *ngIf="element.type != 0">
+      <nz-card style="min-width: 250px;" nzTitle="Avant" nzType="inner">
+        <nz-list nzSize="small">
+          <nz-list-item>
+            <nz-tag>Nom Technique: <b>{{element.previous.name}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isShowChanged ? 'red' : false">Nom d'affichage: <b>{{element.previous.show}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isDescriptionChanged ? 'red' : false">Déscription: <b>{{element.previous.description}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isActiveChanged ? 'red' : false">État: <b>{{element.previous.active ? 'activé' : 'désactivé'}}</b></nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+    <nz-col *ngIf="element.type == 1" style="margin: 20px;"><i class="anticon anticon-arrow-right" nzSize="large"></i></nz-col>
+    <nz-col *ngIf="element.type != 2">
+      <nz-card style="min-width: 250px;" nzTitle="Après" nzType="inner">
+        <nz-list nzSize="small">
+          <nz-list-item>
+            <nz-tag>Nom Technique: <b>{{element.current.name}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isShowChanged ? 'green' : false">Nom d'affichage: <b>{{element.current.show}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isDescriptionChanged ? 'green' : false">Déscription: <b>{{element.current.description}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isActiveChanged ? 'green' : false">État: <b>{{element.current.active ? 'activé' : 'désactivé'}}
+              </b></nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+</ng-template>

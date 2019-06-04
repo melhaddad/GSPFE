@@ -1,0 +1,129 @@
+<nz-card [nzTitle]="naming.getShowCategories">
+  <nz-table #nzTable nzBordered nzShowQuickJumper nzShowSizeChanger nzSize="middle" [nzData]="show" [nzLoading]="loading"
+    [nzTitle]="searchTemplate">
+    <thead (nzSortChange)="setSort($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="name">Nom</th>
+        <th>Déscription</th>
+        <th nzWidth="100px" nzRight="0px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="security.canAddCategory">
+        <td>
+          <nz-form-item nzFlex>
+            <nz-form-control nzSpan="16" nzHasFeedback>
+              <input nz-input placeholder="Nom" [formControl]="addForm.controls['name']" maxlength="30">
+              <nz-form-explain *ngIf="addForm.controls['name'].dirty && addForm.controls['name'].errors">
+                <ng-container *ngIf="addForm.controls['name'].hasError('required')">
+                  Ce champ est obligatoire
+                </ng-container>
+                <ng-container *ngIf="addForm.controls['name'].hasError('minlength')">
+                  Ce champ doit contenir au moins {{addForm.controls['name'].errors['minlength'].requiredLength}}
+                  caractères
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+        <td>
+          <nz-form-item nzFlex>
+            <nz-form-control nzSpan="16" nzHasFeedback>
+              <input nz-input placeholder="Déscription" [formControl]="addForm.controls['description']" maxlength="150">
+              <nz-form-explain *ngIf="addForm.controls['description'].dirty && addForm.controls['description'].errors">
+                <ng-container *ngIf="addForm.controls['description'].hasError('required')">
+                  Ce champ est obligatoire
+                </ng-container>
+                <ng-container *ngIf="addForm.controls['description'].hasError('minlength')">
+                  Ce champ doit contenir au moins
+                  {{addForm.controls['description'].errors['minlength'].requiredLength}} caractères
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+        <td>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-button-group nzBlock>
+                <span nz-tooltip [nzTitle]="naming.getAddCategory"><button nz-button nzType="primary" (click)="add();"
+                    [nzLoading]="adding" [disabled]="!addForm.valid"><i class="anticon anticon-plus"></i></button></span>
+                <span nz-tooltip nzTitle="Initialiser"><button nz-button nzType="default" (click)="addForm.reset()"><i
+                      class="anticon anticon-retweet"></i></button></span>
+              </nz-button-group>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+      </tr>
+      <tr *ngFor="let i of nzTable.data">
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            {{i.name}}
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item nzFlex>
+              <nz-form-control nzSpan="16" nzHasFeedback>
+                <input nz-input placeholder="Nom" [formControl]="editForm.controls['name']" name="nom" maxlength="30">
+                <nz-form-explain *ngIf="editForm.controls['name'].dirty && editForm.controls['name'].errors">
+                  <ng-container *ngIf="editForm.controls['name'].hasError('required')">
+                    Ce champ est obligatoire
+                  </ng-container>
+                  <ng-container *ngIf="editForm.controls['name'].hasError('minlength')">
+                    Ce champ doit contenir au moins {{editForm.controls['name'].errors['minlength'].requiredLength}}
+                    caractères
+                  </ng-container>
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            {{i.description}}
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item nzFlex>
+              <nz-form-control nzSpan="16" nzHasFeedback>
+                <input nz-input placeholder="Déscription" [formControl]="editForm.controls['description']" name="description"
+                  maxlength="150">
+                <nz-form-explain *ngIf="editForm.controls['description'].dirty && editForm.controls['description'].errors">
+                  <ng-container *ngIf="editForm.controls['description'].hasError('required')">
+                    Ce champ est obligatoire
+                  </ng-container>
+                  <ng-container *ngIf="editForm.controls['description'].hasError('minlength')">
+                    Ce champ doit contenir au moins
+                    {{editForm.controls['description'].errors['minlength'].requiredLength}} caractères
+                  </ng-container>
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td nzRight="0px">
+          <nz-button-group *ngIf="editIndex !== i.id">
+            <span *ngIf="security.canUpdateCategory" nz-tooltip [nzTitle]="naming.getUpdateCategory"><button (click)="edit(i)"
+                nz-button><i class="anticon anticon-edit"></i></button></span>
+            <span *ngIf="security.canDeleteCategory" nz-tooltip [nzTitle]="naming.getDeleteCategory"><button
+                nz-popconfirm nzTitle="Êtes-vous sûr de supprimer cette catégorie ?" (nzOnConfirm)="delete(i)"
+                [nzLoading]="deleting[i.id]" nz-button nzType="danger"><i class="anticon anticon-delete"></i></button></span>
+          </nz-button-group>
+          <nz-form-item *ngIf="editIndex === i.id">
+            <nz-form-control>
+              <nz-button-group>
+                <span nz-tooltip nzTitle="Valider"><button nz-popconfirm nzTitle="Êtes-vous sûr de modifier cette catégorie ?"
+                    (nzOnConfirm)="validate(i)" [nzLoading]="validating[i.id]" nz-button [disabled]="!editForm.dirty || !editForm.valid"><i
+                      class="anticon anticon-check"></i></button></span>
+                <span nz-tooltip nzTitle="Annuler"><button nz-button (click)="cancel()" [disabled]="validating[i.id]"><i
+                      class="anticon anticon-close"></i></button></span>
+              </nz-button-group>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #searchTemplate>
+  <input nz-input [(ngModel)]="searchString" id="search" name="search" placeholder="Recherche" (input)="filter()">
+</ng-template>

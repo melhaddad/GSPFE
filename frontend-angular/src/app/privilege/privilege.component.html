@@ -1,0 +1,128 @@
+<nz-card [nzTitle]="naming.getShowPrivileges">
+  <nz-table #nzTable nzBordered nzShowQuickJumper nzShowSizeChanger nzSize="middle" [nzData]="show" [nzLoading]="loading"
+    [nzTitle]="searchTemplate">
+    <thead (nzSortChange)="setSort($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="name">Nom technique</th>
+        <th nzShowSort nzSortKey="description">Déscription</th>
+        <th nzShowSort nzSortKey="show">Nom d'affichage</th>
+        <th nzShowSort nzSortKey="state">État</th>
+        <th nzWidth="100px" nzRight="0px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of nzTable.data">
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            {{i.name}}
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item>
+              <nz-form-control>
+                {{i.name}}
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            {{i.description}}
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item>
+              <nz-form-control nzHasFeedback>
+                <input nz-input placeholder="Déscription" [formControl]="form.controls['description']" name="description"
+                  maxlength="100">
+                <nz-form-explain *ngIf="form.controls['description'].dirty && form.controls['description'].errors">
+                  <ng-container *ngIf="form.controls['description'].hasError('required')">
+                    Ce champ est obligatoire
+                  </ng-container>
+                  <ng-container *ngIf="form.controls['description'].hasError('minlength')">
+                    Ce champ doit contenir au moins
+                    {{form.controls['description'].errors['minlength'].requiredLength}} caractères
+                  </ng-container>
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            {{i.show}}
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item>
+              <nz-form-control nzHasFeedback>
+                <input nz-input placeholder="Nom d'affichage" [formControl]="form.controls['show']" name="show"
+                  maxlength="30">
+                <nz-form-explain *ngIf="form.controls['show'].dirty && form.controls['show'].errors">
+                  <ng-container *ngIf="form.controls['show'].hasError('required')">
+                    Ce champ est obligatoire
+                  </ng-container>
+                  <ng-container *ngIf="form.controls['show'].hasError('minlength')">
+                    Ce champ doit contenir au moins
+                    {{form.controls['show'].errors['minlength'].requiredLength}} caractères
+                  </ng-container>
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            <ng-container *ngIf="i.active">
+              <nz-tag nzColor="green">Activé</nz-tag>
+            </ng-container>
+            <ng-container *ngIf="!i.active">
+              <nz-tag nzColor="red">Désactivé</nz-tag>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item>
+              <nz-form-control>
+                <ng-container *ngIf="i.active">
+                  <nz-tag nzColor="green">Activé</nz-tag>
+                </ng-container>
+                <ng-container *ngIf="!i.active">
+                  <nz-tag nzColor="red">Désactivé</nz-tag>
+                </ng-container>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td nzRight="0px">
+          <ng-container *ngIf="i.name !== 'ALL_PRIVILEGES'">
+            <nz-button-group *ngIf="editIndex !== i.id">
+              <span *ngIf="security.canUpdatePrivilege" nz-tooltip [nzTitle]="naming.getUpdatePrivilege"><button
+                  (click)="edit(i)" nz-button><i class="anticon anticon-edit"></i></button></span>
+              <span *ngIf="i.active && security.canDisablePrivilege" nz-tooltip [nzTitle]="naming.getDisablePrivilege"><button
+                  nz-popconfirm nzTitle="Êtes-vous sûr de désactier ce privilege ?" (nzOnConfirm)="disable(i)"
+                  [nzLoading]="activing[i.id]" nz-button><i class="anticon anticon-close"></i></button></span>
+              <span *ngIf="!i.active && security.canEnablePrivilege" nz-tooltip [nzTitle]="naming.getEnablePrivilege"><button
+                  nz-popconfirm nzTitle="Êtes-vous sûr d'actier ce privilege ?" (nzOnConfirm)="enable(i)" [nzLoading]="activing[i.id]"
+                  nz-button><i class="anticon anticon-check"></i></button></span>
+            </nz-button-group>
+            <nz-form-item *ngIf="editIndex === i.id">
+              <nz-form-control>
+                <nz-button-group>
+                  <span nz-tooltip nzTitle="Valider">
+                    <button nz-popconfirm nzTitle="Êtes-vous sûr de modifier ce privilege ?" (nzOnConfirm)="validate(i)"
+                      [nzLoading]="validating[i.id]" nz-button [disabled]="!form.dirty || !form.valid">
+                      <i class="anticon anticon-check"></i>
+                    </button>
+                  </span>
+                  <span nz-tooltip nzTitle="Annuler"><button nz-button (click)="cancel()" [disabled]="validating[i.id]"><i
+                        class="anticon anticon-close"></i></button></span>
+                </nz-button-group>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #searchTemplate>
+  <input nz-input [(ngModel)]="searchString" id="search" name="search" placeholder="Recherche" (input)="filter()">
+</ng-template>

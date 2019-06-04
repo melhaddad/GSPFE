@@ -1,0 +1,140 @@
+<nz-card [nzTitle]="naming.getShowRoles">
+  <nz-table #nzTable nzBordered nzShowQuickJumper nzShowSizeChanger nzSize="middle" [nzData]="show" [nzLoading]="loading"
+    [nzTitle]="searchTemplate">
+    <thead (nzSortChange)="setSort($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="name">Nom</th>
+        <th>Privilèges</th>
+        <th nzWidth="100px" nzRight="0px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="security.canAddRole">
+        <td>
+          <nz-form-item>
+            <nz-form-control nzHasFeedback>
+              <input nz-input [formControl]="addForm.controls['name']" placeholder="Nom" name="nom" maxlength="30">
+              <nz-form-explain *ngIf="addForm.controls['name'].dirty && addForm.controls['name'].errors">
+                <ng-container *ngIf="addForm.controls['name'].hasError('required')">
+                  Ce champ est obligatoire
+                </ng-container>
+                <ng-container *ngIf="addForm.controls['name'].hasError('minlength')">
+                  Ce champ doit contenir au moins
+                  {{addForm.controls['name'].errors['minlength'].requiredLength}} caractères
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+        <td>
+          <nz-form-item>
+            <nz-form-control nzHasFeedback>
+              <nz-select style="min-width: 320px;" [formControl]="addForm.controls['privileges']" name="privileges"
+                nzMode="tags" nzPlaceHolder="Privilèges" nzAllowClear>
+                <nz-option *ngFor="let privilege of privileges" [nzLabel]="privilege.description" [nzValue]="privilege">
+                </nz-option>
+              </nz-select>
+              <nz-form-explain *ngIf="addForm.controls['privileges'].dirty && addForm.controls['privileges'].errors">
+                <ng-container *ngIf="addForm.controls['privileges'].hasError('required')">
+                  Ce champ est obligatoire
+                </ng-container>
+                <ng-container *ngIf="addForm.controls['privileges'].hasError('minlength')">Ce champ doit contenir au
+                  moins
+                  {{addForm.controls['privileges'].errors['minlength'].requiredLength}} caractères
+                </ng-container>
+              </nz-form-explain>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+        <td nzRight="0px">
+          <nz-form-item>
+            <nz-form-control>
+              <nz-button-group>
+                <span nz-tooltip [nzTitle]="naming.getAddRole"><button nz-button nzType="primary" (click)="add()"
+                    [nzLoading]="adding" [disabled]="!addForm.dirty || !addForm.valid"><i class="anticon anticon-plus"></i></button></span>
+                <span nz-tooltip nzTitle="Initialiser"><button nz-button nzType="default" (click)="reset()"><i class="anticon anticon-retweet"></i></button></span>
+              </nz-button-group>
+            </nz-form-control>
+          </nz-form-item>
+        </td>
+      </tr>
+      <tr *ngFor="let i of nzTable.data">
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            {{i.name}}
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item>
+              <nz-form-control nzHasFeedback>
+                <input nz-input [formControl]="editForm.controls['name']" placeholder="Nom" name="nom" maxlength="30">
+                <nz-form-explain *ngIf="editForm.controls['name'].dirty && editForm.controls['name'].errors">
+                  <ng-container *ngIf="editForm.controls['name'].hasError('required')">
+                    Ce champ est obligatoire
+                  </ng-container>
+                  <ng-container *ngIf="editForm.controls['name'].hasError('minlength')">
+                    Ce champ doit contenir au moins
+                    {{editForm.controls['name'].errors['minlength'].requiredLength}} caractères
+                  </ng-container>
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="editIndex !== i.id">
+            <nz-tag *ngFor="let privilege of i.privileges" [nzColor]="privilege.active ? 'green' : 'red'">{{
+              privilege.description
+              }}
+            </nz-tag>
+          </ng-container>
+          <ng-container *ngIf="editIndex === i.id">
+            <nz-form-item>
+              <nz-form-control nzHasFeedback>
+                <nz-select style="min-width: 320px;" [formControl]="editForm.controls['privileges']" name="privileges"
+                  nzMode="tags" nzPlaceHolder="Privilèges" nzAllowClear [compareWith]="compare">
+                  <nz-option *ngFor="let privilege of privileges" [nzLabel]="privilege.description" [nzValue]="privilege">
+                  </nz-option>
+                </nz-select>
+                <nz-form-explain *ngIf="editForm.controls['privileges'].dirty && editForm.controls['privileges'].errors">
+                  <ng-container *ngIf="editForm.controls['privileges'].hasError('required')">
+                    Ce champ est obligatoire
+                  </ng-container>
+                  <ng-container *ngIf="editForm.controls['privileges'].hasError('minlength')">
+                    Ce champ doit contenir au moins
+                    {{editForm.controls['privileges'].errors['minlength'].requiredLength}} caractères
+                  </ng-container>
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+        <td nzRight="0px">
+          <ng-container *ngIf="i.name !== 'ADMIN'">
+            <nz-button-group *ngIf="editIndex !== i.id">
+              <span *ngIf="security.canUpdateRole" nz-tooltip [nzTitle]="naming.getUpdateRole"><button (click)="edit(i)"
+                  nz-button><i class="anticon anticon-edit"></i></button></span>
+              <span *ngIf="security.canDeleteRole" nz-tooltip [nzTitle]="naming.getDeleteRole"><button nz-popconfirm
+                  nzTitle="Êtes-vous sûr de supprimer ce rôle ?" (nzOnConfirm)="delete(i)" [nzLoading]="deleting[i.id]"
+                  nz-button nzType="danger"><i class="anticon anticon-delete"></i></button></span>
+            </nz-button-group>
+            <nz-form-item *ngIf="editIndex === i.id">
+              <nz-form-control>
+                <nz-button-group>
+                  <span nz-tooltip nzTitle="Valider"><button nz-popconfirm nzTitle="Êtes-vous sûr de modifier ce rôle ?"
+                      (nzOnConfirm)="validate(i)" [nzLoading]="validating[i.id]" nz-button [disabled]="!editForm.dirty || !editForm.valid"><i
+                        class="anticon anticon-check"></i></button></span>
+                  <span nz-tooltip nzTitle="Annuler"><button nz-button (click)="cancel()" [disabled]="validating[i.id]"><i
+                        class="anticon anticon-close"></i></button></span>
+                </nz-button-group>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #searchTemplate>
+  <input nz-input [(ngModel)]="searchString" id="search" name="search" placeholder="Recherche" (input)="filter()">
+</ng-template>

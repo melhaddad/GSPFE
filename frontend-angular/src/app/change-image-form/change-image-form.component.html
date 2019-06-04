@@ -1,0 +1,10 @@
+<nz-card nzTitle="Changer l'image">
+  <nz-upload class="avatar-uploader" nzAction="http://localhost:8080/api/profile/change_image" nzName="avatar"
+    nzListType="picture-card" [nzShowUploadList]="false" [nzBeforeUpload]="beforeUpload" (nzChange)="handleChange($event)">
+    <ng-container *ngIf="!avatarUrl">
+      <i class="anticon anticon-plus"></i>
+      <div class="ant-upload-text">Choisir une image</div>
+    </ng-container>
+    <img *ngIf="user.image" [src]="'http://localhost:8080/image/' + user.image + '.jpg'" width="250px" class="avatar">
+  </nz-upload>
+</nz-card>

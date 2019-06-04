@@ -1,0 +1,45 @@
+<div nz-row nzType="flex" nzJustify="center" nzAlign="middle">
+  <div nz-col nzXs="20" nzSm="16" nzMd="14" nzLg="10" nzXl="8">
+    <nz-card class="login-card" nzTitle="Login" [nzActions]="[actionLogin]">
+      <nz-form-item>
+        <nz-form-control nzHasFeedback>
+          <nz-input-group nzPrefixIcon="anticon anticon-user">
+            <input type="text" nz-input placeholder="Username" [disabled]="loading" [formControl]="form.controls['username']"
+              name="username" maxlength="100">
+          </nz-input-group>
+          <nz-form-explain *ngIf="form.controls['username'].dirty && form.controls['username'].errors">
+            <ng-container *ngIf="form.controls['username'].hasError('required')">
+              Ce champ est obligatoire
+            </ng-container>
+            <ng-container *ngIf="form.controls['username'].hasError('email')">
+              Ce champ doit contenir un email valide
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzHasFeedback>
+          <nz-input-group nzPrefixIcon="anticon anticon-lock">
+            <input type="password" nz-input placeholder="Password" [disabled]="loading" [formControl]="form.controls['password']"
+              name="password" maxlength="30">
+          </nz-input-group>
+          <nz-form-explain *ngIf="form.controls['password'].dirty && form.controls['password'].errors">
+            <ng-container *ngIf="form.controls['password'].hasError('required')">
+              Ce champ est obligatoire
+            </ng-container>
+            <ng-container *ngIf="form.controls['password'].hasError('minlength')">
+              Ce champ doit contenir au moins
+              {{form.controls['password'].errors['minlength'].requiredLength}} caractères
+            </ng-container>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-card>
+  </div>
+</div>
+
+<ng-template #actionLogin>
+  <button nz-button nzBlock [nzType]="'primary'" (click)="submitForm()" [nzLoading]="loading" [disabled]="!form.valid">
+    <i class="anticon anticon-login"></i>Login
+  </button>
+</ng-template>

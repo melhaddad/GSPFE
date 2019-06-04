@@ -1,0 +1,17 @@
+<nz-form-item>
+  <nz-form-control>
+    <nz-select style="min-width: 150px;" nzShowSearch nzAllowClear nzPlaceHolder="Rôles" nzMode="tags" name="roles"
+      [compareWith]="compare" [formControl]="form.controls['roles']">
+      <nz-option *ngFor="let role of roles" [nzLabel]="role.name" [nzValue]="role"></nz-option>
+    </nz-select>
+    <nz-form-explain *ngIf="form.controls['roles'].dirty && form.controls['roles'].errors">
+      Ce champ est obligatoire
+    </nz-form-explain>
+  </nz-form-control>
+</nz-form-item>
+<nz-form-item>
+  <nz-form-control>
+    <button nz-button nzBlock nzType="primary" [nzLoading]="loading" [disabled]="!form.dirty || !form.valid" (click)="updateRoles()">
+      <i class="anticon anticon-edit"></i>Changer</button>
+  </nz-form-control>
+</nz-form-item>

@@ -1,0 +1,18 @@
+<nz-layout class="container">
+  <nz-header *ngIf="authService.isLoggedIn">
+    <button nz-button [nzType]="'primary'" (click)="toggle()" class="toggle-button">
+      <i class="anticon" [class.anticon-menu-unfold]="isCollapsed" [class.anticon-menu-fold]="!isCollapsed"></i>
+    </button>
+    <app-toolbar></app-toolbar>
+  </nz-header>
+  <nz-layout>
+    <nz-sider *ngIf="authService.isLoggedIn" [nzWidth]="width" [nzCollapsed]="isCollapsed" class="sider"
+      [nzCollapsedWidth]="0" [nzBreakpoint]="'lg'" (nzCollapsedChange)="isCollapsed = $event">
+      <app-menu [(isCollapsed)]="isCollapsed"></app-menu>
+    </nz-sider>
+    <nz-content>
+      <router-outlet></router-outlet>
+    </nz-content>
+  </nz-layout>
+  <nz-footer class="footer" nzAlign="bottom">Gestion Inventaire @2018 ilemGROUP</nz-footer>
+</nz-layout>

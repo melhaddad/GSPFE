@@ -1,0 +1,25 @@
+<nz-form-item>
+  <nz-form-control>
+    <input nz-input placeholder="Quantité" [formControl]="supplyForm.controls['quantity']" (keypress)="validateNumber($event)"
+      name="supply">
+    <nz-form-explain *ngIf="supplyForm.controls['quantity'].dirty && supplyForm.controls['quantity'].errors">
+      <ng-container *ngIf="supplyForm.controls['quantity'].hasError('required')">
+        Ce champ est obligatoire
+      </ng-container>
+      <ng-container *ngIf="supplyForm.controls['quantity'].hasError('min')">
+        La valeur doit être supérieur a {{supplyForm.controls['quantity'].errors['min'].min}}
+      </ng-container>
+      <ng-container *ngIf="supplyForm.controls['quantity'].hasError('max')">
+        La valeur doit être inférieur a {{supplyForm.controls['quantity'].errors['max'].max}}
+      </ng-container>
+    </nz-form-explain>
+  </nz-form-control>
+</nz-form-item>
+<nz-form-item>
+  <nz-form-control>
+    <button nz-button nzBlock nzType="primary" [nzLoading]="loading" [disabled]="!supplyForm.dirty || !supplyForm.valid"
+      (click)="validate()">
+      <i class="anticon anticon-plus"></i>Alimenter
+    </button>
+  </nz-form-control>
+</nz-form-item>

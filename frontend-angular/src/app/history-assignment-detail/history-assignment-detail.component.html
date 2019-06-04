@@ -1,0 +1,53 @@
+<button style="float: right; margin-left: 10px;" (click)="true" nz-button nz-popover nzTrigger="click" [nzTitle]="action"
+  nzSize="small" [nzContent]="details">
+  <i class="anticon anticon-select"></i>
+  Details
+</button>
+
+<ng-template #details>
+  <nz-row nzType="flex" nzJustify="center" nzAlign="middle">
+    <nz-col *ngIf="element.type != 0">
+      <nz-card style="min-width: 250px;" nzTitle="Avant" nzType="inner">
+        <nz-list nzSize="small">
+          <nz-list-item>
+            <nz-tag>Employé: <b>{{element.previous.user.lastName}} {{element.previous.user.firstName}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag>Matériel: <b>{{element.previous.item?.name}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag style="size: legal">Message: <b>{{element.previous.message}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isQuantityChanged ? 'red' : false">Quantité: <b>{{element.previous.quantity}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isStateChanged ? 'red' : false">État: <b>{{element.previous.type}}</b></nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+    <nz-col *ngIf="element.type == 1" style="margin: 20px;"><i class="anticon anticon-arrow-right" nzSize="large"></i></nz-col>
+    <nz-col *ngIf="element.type != 2">
+      <nz-card style="min-width: 250px;" nzTitle="Après" nzType="inner">
+        <nz-list nzSize="small">
+          <nz-list-item>
+            <nz-tag>Employé: <b>{{element.current.user.lastName}} {{element.current.user.firstName}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag>Matériel: <b>{{element.current.item?.name}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag>Message : <b>{{element.current.message}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isQuantityChanged ? 'green' : false">Quantité: <b>{{element.current.quantity}}</b></nz-tag>
+          </nz-list-item>
+          <nz-list-item>
+            <nz-tag [nzColor]="isStateChanged ? 'green' : false">État: <b>{{element.current.type}}</b></nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+</ng-template>

@@ -1,0 +1,21 @@
+<!-- <ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="sider-menu">
+  <li [nzSelected]="selected === '/profile'" *ngIf="security.canShowProfile" nz-menu-item><a routerLink="/profile"><i
+        class="anticon anticon-profile"></i>{{naming.getShowProfile}}</a></li>
+  <li [nzSelected]="selected === '/categories'" *ngIf="security.canShowCategories" nz-menu-item><a routerLink="/categories"><i
+        class="anticon anticon-api"></i>{{naming.getShowCategories}}</a></li>
+  <li [nzSelected]="selected === '/items'" *ngIf="security.canShowItems" nz-menu-item><a routerLink="/items"><i class="anticon anticon-laptop"></i>{{naming.getShowItems}}</a></li>
+  <li [nzSelected]="selected === '/users'" *ngIf="security.canShowUsers" nz-menu-item><a routerLink="/users"><i class="anticon anticon-contacts"></i>{{naming.getShowUsers}}</a></li>
+  <li [nzSelected]="selected === '/assignments'" nz-menu-item><a routerLink="/assignments"><i class="anticon anticon-swap"></i>{{naming.getShowUserItem}}</a></li>
+  <li [nzSelected]="selected === '/roles'" *ngIf="security.canShowRoles" nz-menu-item><a routerLink="/roles"><i class="anticon anticon-user"></i>{{naming.getShowRoles}}</a></li>
+  <li [nzSelected]="selected === '/privileges'" *ngIf="security.canShowPrivileges" nz-menu-item><a routerLink="/privileges"><i
+        class="anticon anticon-lock"></i>{{naming.getShowPrivileges}}</a></li>
+  <li [nzSelected]="selected === '/history'" *ngIf="security.canShowHistory" nz-menu-item><a routerLink="/history"><i
+        class="anticon anticon-hourglass"></i>{{naming.getShowHistory}}</a></li>
+  <li nz-menu-item><a routerLink="/login" (click)="authService.logout()"><i class="anticon anticon-logout"></i>Déconnexion</a></li>
+</ul> -->
+
+<ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" class="sider-menu">
+  <li *ngFor="let menu of menus" [nzSelected]="selected === menu.link" nz-menu-item>
+    <a (click)="menu.action()" [routerLink]="menu.link"><i [class]="'anticon anticon-' + menu.icon"></i>{{menu.text}}</a>
+  </li>
+</ul>

@@ -1,0 +1,33 @@
+<nz-card [nzTitle]="naming.getShowProfile">
+  <nz-row nzType="flex" nzJustify="space-around" nzAlign="top" nzGutter="8">
+    <nz-col [nzXs]="24" [nzMd]="12">
+      <nz-card style="margin-bottom: 8px;">
+        <nz-card-meta [nzTitle]="user.lastName + ' ' + user.firstName" [nzAvatar]="avatarTemplate" [nzDescription]="profileDetails"></nz-card-meta>
+      </nz-card>
+      <ng-template #avatarTemplate>
+        <nz-avatar [nzShape]="'circle'" nzIcon="anticon anticon-user" [nzSrc]="'http://localhost:8080/image/' + user.image + '.jpg'"></nz-avatar>
+      </ng-template>
+      <ng-template #coverTemplate>
+        <img alt="image" [src]="'http://localhost:8080/image/' + user.image + '.jpg'" />
+      </ng-template>
+      <ng-template #profileDetails>
+        <nz-list nzBordered>
+          <nz-list-item>Adresse: {{user.address}}</nz-list-item>
+          <nz-list-item>Email: {{user.email}}</nz-list-item>
+          <nz-list-item>Fonction: {{user.function}}</nz-list-item>
+          <nz-list-item>Rôles:
+            <nz-tag *ngFor="let role of user.roles">{{role.name}}</nz-tag>
+          </nz-list-item>
+        </nz-list>
+      </ng-template>
+    </nz-col>
+    <nz-col [nzXs]="24" [nzMd]="12">
+      <div nz-row>
+        <app-change-password-form *ngIf="security.canUpdatePassword"></app-change-password-form>
+      </div>
+      <div nz-row>
+        <app-change-image-form *ngIf="security.canUpdateProfileImage" (load)="refresh()"></app-change-image-form>
+      </div>
+    </nz-col>
+  </nz-row>
+</nz-card>

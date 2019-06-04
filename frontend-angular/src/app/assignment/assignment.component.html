@@ -1,0 +1,197 @@
+<nz-card style="width: 100%;" [nzTitle]="naming.getShowUserItem">
+    <nz-card-tab>
+        <nz-tabset nzSize="large" (nzSelectChange)="loadAssignments($event)">
+            <nz-tab nzTitle="Mes affectations"></nz-tab>
+            <nz-tab *ngIf="security.canShowItems" nzTitle="Tous"></nz-tab>
+            <nz-tab *ngIf="security.canRequestItem" nzTitle="Demandes"></nz-tab>
+            <nz-tab *ngIf="security.canDeliverItem" nzTitle="À liverer"></nz-tab>
+            <nz-tab *ngIf="security.canTakeItem" nzTitle="À récupérer"></nz-tab>
+        </nz-tabset>
+    </nz-card-tab>
+    <nz-table #nzTable [nzData]="elements" nzBordered nzShowQuickJumper nzShowSizeChanger nzSize="middle" >
+        <thead>
+        <tr>
+            <th>Nom et Prénom</th>
+            <th *ngIf="nzTitle!=='Demandes'">Matériel</th><th>Message</th>
+            <th>Quantité</th>
+            <th *ngIf="nzTitle === 'Tous'">État</th>
+            <th *ngIf="nzTitle !== 'Tous'">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngIf="security.canRequestItem && nzTitle == 'Demandes'" >
+            <td>
+                <nz-form-item>
+                    <nz-form-control>
+                        {{user.lastName}} {{user.firstName}}
+                    </nz-form-control>
+                </nz-form-item>
+            </td>
+            <td *ngIf="nzTitle!=='Demandes'">
+            </td>
+            <td>
+                <nz-form-item>
+                    <nz-form-control nzHasFeedback>
+                        <textarea nz-input [formControl]="form.controls['message']" id="message" name="messsage"
+                                  placeholder="Saisez votre demande ici ...?" ngModel nzAutosize></textarea>
+                        <nz-form-explain *ngIf="form.controls['message'].dirty && form.controls['message'].errors">
+                            <ng-container *ngIf="form.controls['message'].hasError('required')">
+                                Ce champ est obligatoire
+                            </ng-container>
+                            <ng-container *ngIf="form.controls['message'].hasError('minlength')">
+                                La valeur doit être supérieur à {{form.controls['message'].errors['minlength'].requiredLength}} caractere.
+                            </ng-container>
+                            <ng-container *ngIf="form.controls['message'].hasError('maxlength')">
+                                La valeur doit être inférieur à
+                                {{form.controls['message'].errors['maxlength'].requiredLength}} caractere.
+                            </ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+            </td>
+            <td>
+                <nz-form-item>
+                    <nz-form-control nzHasFeedback>
+                        <input nz-input [formControl]="form.controls['quantity']" id="quantity" name="quantity"
+                               placeholder="Quantité"
+                               (keypress)="validateNumber($event)" maxlength="3">
+                        <nz-form-explain *ngIf="form.controls['quantity'].dirty && form.controls['quantity'].errors">
+                            <ng-container *ngIf="form.controls['quantity'].hasError('required')">
+                                Ce champ est obligatoire
+                            </ng-container>
+                            <ng-container *ngIf="form.controls['quantity'].hasError('min')">
+                                La valeur doit être supérieur à {{form.controls['quantity'].errors['min'].min}}
+                            </ng-container>
+                            <ng-container *ngIf="form.controls['quantity'].hasError('max')">
+                                La valeur doit être inférieur à {{form.controls['quantity'].errors['max'].max}}
+                            </ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+            </td>
+            <td>
+                <nz-form-item>
+                    <nz-form-control>
+                        <nz-button-group>
+                <span nz-tooltip [nzTitle]="naming.getRequestItem">
+                  <button nz-button nzType="primary" (click)="request()" [nzLoading]="requesting"
+                          [disabled]="!form.dirty || !form.valid">
+                    <i class="anticon anticon-plus"></i>
+                  </button>
+                </span>
+                            <span nz-tooltip nzTitle="Initialiser">
+                  <button nz-button (click)="reset()">
+                    <i class="anticon anticon-retweet"></i>
+                  </button>
+                </span>
+                        </nz-button-group>
+                    </nz-form-control>
+                </nz-form-item>
+            </td>
+        </tr>
+        <tr *ngFor="let i of nzTable.data">
+            <td>{{i.user.lastName}} {{i.user.firstName}}</td>
+            <td *ngIf=" nzTitle !== 'Demandes' && i.type !== 'REQUESTED'">{{i.item?.name}}</td>
+            <td *ngIf=" nzTitle !== 'Demandes' && i.type === 'REQUESTED'"></td>
+            <td>{{i.message}}</td>
+            <td>{{i.quantity}}</td>
+            <td *ngIf="nzTitle === 'Tous'">{{i.type}}</td>
+            <td *ngIf="nzTitle !== 'Tous'">
+                <ng-container *ngIf="security.canReturnItem && nzTitle === 'Mes affectations' && i.type === 'DELIVERED'">
+                    <nz-button-group>
+              <span nz-tooltip [nzTitle]="naming.getReturnItem">
+                <button nz-button nz-popconfirm nzTrigger="click"
+                        nzTitle="Êtes-vous sûr de retourner cette affectation ?"
+                        (nzOnConfirm)="return(i)" [nzLoading]="delivering[i.id]">
+                  <i class="anticon anticon-arrow-right"></i>
+                </button>
+              </span>
+                    </nz-button-group>
+                </ng-container>
+                <ng-container *ngIf="nzTitle === 'Demandes'">
+                    <button nz-button (click)="showModal(i)">
+                        <span><i class="anticon anticon-eye-o"></i></span>
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="nzTitle === 'À liverer'">
+                    <nz-button-group>
+              <span nz-tooltip [nzTitle]="naming.getDeliverItem">
+                <button nz-button nz-popconfirm nzTrigger="click" nzTitle="Êtes-vous sûr de livrer cette affectation ?"
+                        (nzOnConfirm)="deliver(i)" [nzLoading]="delivering[i.id]">
+                  <i class="anticon anticon-arrow-right"></i>
+                </button>
+              </span>
+                    </nz-button-group>
+                </ng-container>
+                <ng-container *ngIf="nzTitle === 'À récupérer'">
+                    <nz-button-group>
+              <span nz-tooltip [nzTitle]="naming.getTakeItem">
+                <button nz-button nz-popconfirm nzTrigger="click"
+                        nzTitle="Êtes-vous sûr de récupérer cette affectation ?"
+                        (nzOnConfirm)="take(i)" [nzLoading]="taking[i.id]">
+                  <i class="anticon anticon-arrow-left"></i>
+                </button>
+              </span>
+                    </nz-button-group>
+                </ng-container>
+            </td>
+        </tr>
+        </tbody>
+    </nz-table>
+</nz-card>
+<nz-modal [nzVisible]="isVisible"
+          nzTitle="Message de {{user.lastName}} {{user.firstName}} "
+          [nzContent]="modalContent"
+          [nzFooter]=modalFooter
+          (nzOnCancel)="handleCancel()">
+</nz-modal>
+<ng-template #modalContent>
+    <form nz-form [formGroup]="acceptForm">
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24">Message</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback>
+                <textarea  [formControl]="acceptForm.controls['message']" [(ngModel)]="assignmentModal.message" nz-input rows="6" cols="1" name="message" readonly>{{assignmentModal.message}}</textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired>Matériel</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback>
+                <nz-select style="min-width: 320px;" [formControl]="acceptForm.controls['item']" name="_new.item"
+                           nzPlaceHolder="Matériel"
+                           [(ngModel)]="assignmentModal.item"
+                           nzAllowClear>
+                    <nz-option *ngFor="let item of items" [nzLabel]="item.name" [nzValue]="item"></nz-option>
+                </nz-select>
+                <nz-form-explain *ngIf="acceptForm.controls['item'].dirty && acceptForm.controls['item'].errors">
+                    Ce champ est obligatoire
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired>Quantité</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-number [formControl]="acceptForm.controls['quantity']" name="quantity"
+                                 [(ngModel)]="assignmentModal.quantity" [nzMin]="1" [nzMax]="999"
+                                 [nzStep]="1" (keypress)="validateNumber($event)"></nz-input-number>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</ng-template>
+<ng-template #modalFooter>
+    <div nz-row nzType="flex" nzJustify="center">
+        <nz-button-group>
+              <span nz-tooltip [nzTitle]="naming.getAcceptItem" *ngIf="security.canAcceptItem">
+                <button style="margin-bottom: 12px" nz-button nz-popconfirm nzTrigger="click" nzType="primary"
+                        nzTitle="Êtes-vous sûr d'accepter cette affectation ?"
+                        (nzOnConfirm)="accept(assignmentModal)" [nzLoading]="accepting[assignmentModal.id]"
+                        [disabled]="!acceptForm.valid">Accepter</button>
+              </span>
+            <span nz-tooltip [nzTitle]="naming.getRefuseItem" *ngIf="security.canRefuseItem">
+                <button style="margin-bottom: 12px" nz-button nz-popconfirm nzTrigger="click" nzType="danger"
+                        nzTitle="Êtes-vous sûr de refuser cette affectation ?"
+                        (nzOnConfirm)="refuse(assignmentModal)" [nzLoading]="refusing[assignmentModal.id]"
+                        [disabled]="!acceptForm.valid">Refuser</button>
+              </span>
+        </nz-button-group>
+    </div>
+</ng-template>

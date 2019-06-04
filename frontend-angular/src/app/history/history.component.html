@@ -1,0 +1,58 @@
+<nz-card style="width: 100%;" [nzTitle]="naming.getShowHistory">
+  <nz-card-tab>
+    <nz-tabset nzSize="large" [(nzSelectedIndex)]="idx" (nzSelectChange)="load()">
+      <nz-tab [nzTitle]="categoryTemplate">
+        <ng-template #categoryTemplate>
+          <i class="anticon anticon-api"></i>
+          {{naming.getShowCategories}}
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="itemTemplate">
+        <ng-template #itemTemplate>
+          <i class="anticon anticon-laptop"></i>
+          {{naming.getShowItems}}
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="userTemplate">
+        <ng-template #userTemplate>
+          <i class="anticon anticon-contacts"></i>
+          {{naming.getShowUsers}}
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="assignmentTemplate">
+        <ng-template #assignmentTemplate>
+          <i class="anticon anticon-retweet"></i>
+          {{naming.getShowUserItem}}
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="roleTemplate">
+        <ng-template #roleTemplate>
+          <i class="anticon anticon-user"></i>
+          {{naming.getShowRoles}}
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="privilegeTemplate">
+        <ng-template #privilegeTemplate>
+          <i class="anticon anticon-lock"></i>
+          {{naming.getShowPrivileges}}
+        </ng-template>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card-tab>
+  <nz-row nzType="flex" nzJustify="start" nzAlign="top">
+    <nz-timeline [nzPending]="loading ? 'Chargement...' : false">
+      <nz-timeline-item *ngFor="let element of elements.slice((page - 1) * pageSize, page * pageSize)" [nzColor]="element.color">
+        <nz-tag>{{element.date}}</nz-tag>L'employé <b>{{element.user}}</b> a effectué une <b>{{element.action}}</b>
+        <app-history-category-detail *ngIf="idx === 0" [element]="element" [action]="element.action"></app-history-category-detail>
+        <app-history-item-detail *ngIf="idx === 1" [element]="element" [action]="element.action"></app-history-item-detail>
+        <app-history-user-detail *ngIf="idx === 2" [element]="element" [action]="element.action"></app-history-user-detail>
+        <app-history-assignment-detail *ngIf="idx === 3" [element]="element" [action]="element.action"></app-history-assignment-detail>
+        <app-history-role-detail *ngIf="idx === 4" [element]="element" [action]="element.action"></app-history-role-detail>
+        <app-history-privilege-detail *ngIf="idx === 5" [element]="element" [action]="element.action"></app-history-privilege-detail>
+      </nz-timeline-item>
+    </nz-timeline>
+  </nz-row>
+  <nz-row nzType="flex" nzJustify="center" nzAlign="center">
+    <nz-pagination [(nzPageIndex)]="page" [nzPageSize]="pageSize" [nzTotal]="pages"></nz-pagination>
+  </nz-row>
+</nz-card>

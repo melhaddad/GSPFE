@@ -1,0 +1,38 @@
+<div class="logo">Gestion Inventaire</div>
+<ul nz-menu [nzTheme]="'dark'" [nzMode]="'horizontal'" style="line-height: 64px; float: right;">
+  <li style="background-color: transparent;" nz-menu-item>
+    <nz-badge nz-popover nzTitle="Notifications" [nzTrigger]="'click'" nzPlacement="bottom" [nzContent]="contentTemplate"
+      [nzCount]="notificationService.notificationCount">
+      <i style="color: white;" class="anticon anticon-bell"></i>
+      <ng-template #contentTemplate>
+        <nz-list style="max-width: 400px;min-width: 400px;" [nzDataSource]="notifications" [nzRenderItem]="item">
+          <ng-template #item let-i>
+            <nz-list-item [nzActions]="[closeTemplate]">
+              <ng-template #closeTemplate>
+                <button nz-tooltip nzShape="circle" nzSize="small" [nzLoading]="closing[i.id]" nzTitle="Fermer" (click)="delete(i)"
+                  nz-button><i class="anticon anticon-close"></i></button>
+              </ng-template>
+              <nz-list-item-meta [nzTitle]="itemTitle" [nzAvatar]="avatarTemplate" [nzDescription]="date(i.date)">
+                <ng-template #itemTitle>
+                  <div [innerHTML]="i.message"></div>
+                </ng-template>
+                <ng-template #avatarTemplate>
+                  <nz-avatar style="color: #f5222d; background: #fff1f0; border-color: #ffa39e;" *ngIf="i.type === 'ERROR'"
+                    nzIcon="anticon anticon-close-circle-o"></nz-avatar>
+                  <nz-avatar style="color: #fa8c16; background: #fff7e6; border-color: #ffd591;" *ngIf="i.type === 'WARNING'"
+                    nzIcon="anticon anticon-question-circle-o"></nz-avatar>
+                  <nz-avatar style="color: #1890ff; background: #e6f7ff; border-color: #91d5ff;" *ngIf="i.type === 'INFO'"
+                    nzIcon="anticon anticon-exclamation-circle-o"></nz-avatar>
+                </ng-template>
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </ng-template>
+    </nz-badge>
+  </li>
+  <li nz-menu-item>
+    <nz-avatar [nzShape]="'circle'" nzIcon="anticon anticon-user" [nzSrc]="'http://localhost:8080/image/' + user.image + '.jpg'"></nz-avatar>
+    {{user.lastName | uppercase}} {{user.firstName}}
+  </li>
+</ul>
